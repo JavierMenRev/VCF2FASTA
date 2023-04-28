@@ -74,7 +74,8 @@ def get_variant_sequences(vcf_file, fasta_file, out_file, flank_size=500):
             alt_seq = left_seq.seq.upper() + alt.upper() + right_seq.seq.upper()
             
         else:
-            raise ValueError("Invalid change length")
+            print(f"Skipping: {chrom}:{pos+1}_{str(ref).upper()}_{variant_id}")
+            continue
         
         # Save FASTA files
         if len(ref_seq) == flank_size*2 and len(alt_seq) == flank_size*2 and ref_true == ref and ref_seq != alt_seq and is_valid_sequence(ref_seq) and is_valid_sequence(alt_seq):
@@ -86,6 +87,9 @@ def get_variant_sequences(vcf_file, fasta_file, out_file, flank_size=500):
             sequence_header_alt = f"{chrom}:{pos+1}_{str(alt).upper()}_{variant_id}"
             fasta_file.write(">" + sequence_header_alt + "\n")
             fasta_file.write(alt_seq + "\n")
+            
+        else:
+            print(f"Skipping: {chrom}:{pos+1}_{ref_true.seq.upper()}_{variant_id}")
                 
     # Close the reference genome file
     genome.close()
@@ -96,7 +100,7 @@ def get_variant_sequences(vcf_file, fasta_file, out_file, flank_size=500):
 
 def get_options():
 
-    parser = argparse.ArgumentParser(description='vcf2fasta')
+    parser = argparse.ArgumentParser(description='VCF2FASTA')
     
     parser.add_argument('-I', metavar='input', nargs='?', default=std_in, required=True,
                         help='path to the input VCF file, defaults to standard in')
