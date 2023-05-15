@@ -34,11 +34,12 @@ def get_variant_sequences(vcf_file, fasta_file, out_file, flank_size=500):
     # Loop over each variant in the VCF file
     for index, row in pd.read_csv(vcf_file, sep='\t', comment='#', header=None, names=['chrom', 'pos', 'id', 'ref', 'alt', 'info']).iterrows():
         # Extract the chromosome, position, reference allele, and alternative allele
-        chrom = row['chrom']
-        pos = row['pos'] - 1
-        ref = row['ref']
-        alt = row['alt']
-        variant_id = row['id']
+        chrom = str(row['chrom'])
+        pos = int(row['pos']) - 1
+        ref = str(row['ref'])
+        alt = str(row['alt'])
+        variant_id = str(row['id'])
+        info = str(row["info"])
         
         # Determine the size of the allele change
         ref_len = len(ref)
@@ -81,15 +82,15 @@ def get_variant_sequences(vcf_file, fasta_file, out_file, flank_size=500):
         if len(ref_seq) == flank_size*2 and len(alt_seq) == flank_size*2 and ref_true == ref and ref_seq != alt_seq and is_valid_sequence(ref_seq) and is_valid_sequence(alt_seq):
             
             # Make sequence header
-            sequence_header_ref = f"{chrom}:{pos+1}_{ref_true.seq.upper()}_{variant_id}"
+            sequence_header_ref = f"{chrom}:{pos+1}_{ref_true.seq.upper()}_{variant_id}|{str(info)}"
             fasta_file.write(">" + sequence_header_ref + "\n")
             fasta_file.write(ref_seq + "\n")
-            sequence_header_alt = f"{chrom}:{pos+1}_{str(alt).upper()}_{variant_id}"
+            sequence_header_alt = f"{chrom}:{pos+1}_{str(alt).upper()}_{variant_id}|{str(info)}"
             fasta_file.write(">" + sequence_header_alt + "\n")
             fasta_file.write(alt_seq + "\n")
             
         else:
-            print(f"Skipping: {chrom}:{pos+1}_{ref_true.seq.upper()}_{variant_id}")
+            print(f"Skipping: {chrom}:{pos+1}_{ref_true.seq.upper()}_{variant_id}|{str(info)}")
                 
     # Close the reference genome file
     genome.close()
