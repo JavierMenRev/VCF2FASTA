@@ -71,7 +71,7 @@ def get_variant_sequences(vcf_file, fasta_file, out_file, flank_size=500):
             ref_true = genome[chrom][pos : pos + ref_len]
             right_seq = genome[chrom][pos + ref_len : pos + ref_len + flank_size - ref_len]
             ref_seq = left_seq.seq.upper() + ref_true.seq.upper() + right_seq.seq.upper()
-            right_seq = genome[chrom][pos + 1 : pos + 1 + flank_size - 1]
+            right_seq = genome[chrom][pos + ref_len : pos + ref_len + flank_size - ref_len + 1]
             alt_seq = left_seq.seq.upper() + alt.upper() + right_seq.seq.upper()
             
         else:
